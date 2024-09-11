@@ -4,6 +4,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
+import tmdb.example.movieservice.exception.InvalidDataException;
+import tmdb.example.movieservice.exception.NotFoundException;
 import tmdb.example.movieservice.model.Movie;
 import tmdb.example.movieservice.repo.MovieRepository;
 
@@ -17,7 +19,7 @@ public class MovieService {
     //CRUD Operation - Create, Read, Update, Delete
     public Movie Create(Movie movie){
         if(movie == null){
-            throw new RuntimeException("Invalid movie");
+            throw new InvalidDataException("Invalid movie : null");
         }
 
         return movieRepository.save(movie);
@@ -25,12 +27,12 @@ public class MovieService {
 
     public Movie read(Long id){
         return movieRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Movie not found with id: " + id));
+                .orElseThrow(() -> new NotFoundException("Movie not found with id: " + id));
     }
 
     public void Update(Long id, Movie update){
         if(update==null || id==null){
-            throw new RuntimeException("Movie Not Found");
+            throw new InvalidDataException("Invalid movie:null");
         }
 
         //check if exists
@@ -43,7 +45,7 @@ public class MovieService {
 
         }
         else{
-            throw new RuntimeException("Movie Not Found");
+            throw new NotFoundException("Movie not found with id :"+id);
 
         }
     }
@@ -53,7 +55,7 @@ public class MovieService {
             movieRepository.deleteById(id);
         }
         else{
-            throw new RuntimeException("Movie Not Found");
+            throw new NotFoundException("Movie not found with id "+id);
         }
 
     }
